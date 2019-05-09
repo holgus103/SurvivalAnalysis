@@ -26,7 +26,7 @@ label = []
 # for every row in the data
 for row in reader:
     # convert every feature cell
-    data.append(numpy.array(list(map(convertToFloat, row[1:len(row)]))))
+    data.append(numpy.array(list(map(convertToFloat, row[2:len(row)]))))
     # get the label and add it to the label list
     label.append(('1' == row[0], convertToFloat(row[1])))
 
@@ -49,21 +49,21 @@ random.shuffle(diabetic);
 random.shuffle(non_diabetic);
 
 # split data and labels
-train_data = diabetic[0:int(0.66 * len(data))] + non_diabetic[0:int(0.66 * len(data))];
-test_data = diabetic[int(0.66 * len(data)) : len(data)] + non_diabetic[int(0.66 * len(data)) : len(data)];
+train_data = diabetic[0:int(0.66 * len(diabetic))] + non_diabetic[0:int(0.66 * len(non_diabetic))];
+test_data = diabetic[int(0.66 * len(diabetic)) : len(diabetic)] + non_diabetic[int(0.66 * len(non_diabetic)) : len(non_diabetic)];
 
-data, label = zip(*d);
+_train_d, _train_l = zip(*train_data);
+_test_d, _test_l = zip(*test_data);
 
-data = list(data);
-label = list(label);
+_train_d = list(_train_d)
+_test_d = list(_test_d)
 
 
 
-train_label = label[0:int(0.66 * len(data))]
-train_label = numpy.array(train_label, dtype='bool,f4');
 
-test_label = label[int(0.66 * len(data)) + 1 : len(data)];
-test_label = numpy.array(test_label, dtype='bool,f4');
+_train_l = numpy.array(list(_train_l), dtype='bool,f4');
+
+_test_l = numpy.array(list(_test_l), dtype='bool,f4');
 
 
 
@@ -71,11 +71,11 @@ test_label = numpy.array(test_label, dtype='bool,f4');
 clf = CoxnetSurvivalAnalysis(n_alphas=5, tol=0.1)
 
 # train the model
-clf.fit(train_data, train_label);
+clf.fit(_train_d, _train_l);
 
 # calculate precision
-clf.predict(test_data);
-res= clf.predict(test_data);
+clf.predict(_test_d);
+res= clf.predict(_test_d);
 
 
 # print out some results
@@ -87,6 +87,4 @@ print(res)
 #numpy.savetxt("res.txt", list(map(lambda x : [str(x[0]),str(x[1])], zip(clf.predict(test_data), header[2:len(header)]))), fmt="%s")
 
 
-#check the value of alphas
-clf.alphas_
 
