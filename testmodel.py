@@ -4,6 +4,8 @@ import random
 from sksurv.linear_model import CoxnetSurvivalAnalysis
 from sksurv.nonparametric import kaplan_meier_estimator
 from sksurv.linear_model import CoxPHSurvivalAnalysis
+from sksurv.metrics import concordance_index_censored
+from sklearn.model_selection import GridSearchCV
 import matplotlib.pyplot as plt;
 
 
@@ -76,9 +78,9 @@ plt.legend();
 
 plt.plot();
 
-_train_l = numpy.array(list(_train_l), dtype='bool,f4');
+    _train_l = numpy.array(list(_train_l), dtype='bool,f4');
 
-_test_l = numpy.array(list(_test_l), dtype='bool,f4');
+    _test_l = numpy.array(list(_test_l), dtype='bool,f4');
 
 # create ph model
 estimator = CoxPHSurvivalAnalysis();
@@ -88,8 +90,16 @@ estimator.fit(_train_d, _train_l)
 # create the cox model
 clf = CoxnetSurvivalAnalysis(n_alphas=5, tol=0.1)
 
-# train the model
+# train model 
 clf.fit(_train_d, _train_l);
+
+result = [];
+# evaluate for every alpha
+for v in clf.alphas_:
+    res = clf.predict(_test_d, alpha=[v])
+    result.append(concordance_index_censored(tft, timet, res))
+
+
 
 # calculate precision
 clf.predict(_test_d);
