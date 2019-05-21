@@ -2,6 +2,9 @@ import csv
 import numpy
 import random
 from sksurv.linear_model import CoxnetSurvivalAnalysis
+from sksurv.nonparametric import kaplan_meier_estimator
+from sksurv.linear_model import CoxPHSurvivalAnalysis
+import matplotlib.pyplot as plt;
 
 
 # converts cells to floats, empty cells become 0
@@ -58,14 +61,29 @@ _test_d, _test_l = zip(*test_data);
 _train_d = list(_train_d)
 _test_d = list(_test_d)
 
+# plot some lame estimator stuff
+tf, time = zip(*_train_l);
+x, y = kaplan_meier_estimator(tf, time);
 
+plt.step(x, y, where="post", label="Train data");
 
+tft, timet = zip(*_test_l);
+xt, yt = kaplan_meier_estimator(tft, timet);
+
+plt.step(xt, yt, where="post", label="Test data");
+
+plt.legend();
+
+plt.plot();
 
 _train_l = numpy.array(list(_train_l), dtype='bool,f4');
 
 _test_l = numpy.array(list(_test_l), dtype='bool,f4');
 
+# create ph model
+estimator = CoxPHSurvivalAnalysis();
 
+estimator.fit(_train_d, _train_l)
 
 # create the cox model
 clf = CoxnetSurvivalAnalysis(n_alphas=5, tol=0.1)
