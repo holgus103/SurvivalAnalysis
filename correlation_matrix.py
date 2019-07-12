@@ -42,3 +42,17 @@ def pretty_print(matrix):
             print('{0} '.format(matrix[len(matrix)-1][j]));
         else:
             print(' ');
+
+def generate_full_matrix(matrix_triangular):
+    matrix = [];
+    for j in range(0, len(matrix_triangular) + 1):
+        row = []
+        for i in range(0, j):
+            row.append(matrix_triangular[j-1][i]);
+        row.append(1);
+        for i in range(j, len(matrix_triangular)-1):
+            row.append(matrix_triangular[i][j]);
+        if(j < len(matrix_triangular)):
+            row.append(matrix_triangular[len(matrix_triangular)-1][j]);
+        matrix.append(row);
+    return matrix;
